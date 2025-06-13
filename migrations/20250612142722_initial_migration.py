@@ -5,26 +5,28 @@ Migration Name: initial_migration
 Migration Version: 20250612142722
 """
 
+import os
+import sys
 
-COMMON_FIELDS = """
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        uid TEXT UNIQUE,
-        label TEXT UNIQUE,
-        description TEXT
-    """
 
-COMMON_REACTION_ITEM_FIELDS = f"""
-        {COMMON_FIELDS},
-        scope TEXT,
-        parent TEXT
-    """
+sys.path.append(os.path.abspath("."))
 
 def upgrade(connection):
+
+    import utils
+
+    sql = f"""
+        CREATE TABLE tag
+        (   
+            {utils.COMMON_FIELDS}
+        ) """
     
+    connection.execute(sql)
+
     sql = f"""
         CREATE TABLE fact
         (   
-            {COMMON_REACTION_ITEM_FIELDS},
+            {utils.COMMON_REACTION_ITEM_FIELDS},
             type TEXT,
             is_enum INTEGER NOT NULL DEFAULT 0,
             trigger_signal_on_modified INTEGER NOT NULL DEFAULT 0,
@@ -36,28 +38,18 @@ def upgrade(connection):
     connection.execute(sql)
 
     sql = f"""
-        CREATE TABLE rule
+        CREATE TABLE event
         (   
-            {COMMON_REACTION_ITEM_FIELDS},
-            match_once INTEGER NOT NULL DEFAULT 0,
-            priority INTEGER DEFAULT 0,
-            CHECK (match_once IN (0, 1))
-        ) """
-    
-    connection.execute(sql)
-    
-    sql = f"""
-        CREATE TABLE tag
-        (   
-            {COMMON_FIELDS}
+            {utils.COMMON_REACTION_ITEM_FIELDS}
         ) """
     
     connection.execute(sql)
 
     sql = f"""
-        CREATE TABLE event
+        CREATE TABLE rule
         (   
-            {COMMON_REACTION_ITEM_FIELDS}
+            {utils.COMMON_FIELDS_RULE},
+            {utils.COMMON_CHECKS_RULE}
         ) """
     
     connection.execute(sql)
