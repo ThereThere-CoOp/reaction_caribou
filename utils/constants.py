@@ -1,14 +1,13 @@
 COMMON_FIELDS = """
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         uid TEXT UNIQUE,
-        label TEXT UNIQUE,
+        label TEXT,
         description TEXT
     """
 
 COMMON_REACTION_ITEM_FIELDS = f"""
         {COMMON_FIELDS},
-        scope TEXT,
-        parent TEXT
+        scope TEXT DEFAULT 'Global'
     """
 
 COMMON_FIELDS_RULE = f"""

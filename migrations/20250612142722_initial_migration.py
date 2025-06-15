@@ -18,7 +18,15 @@ def upgrade(connection):
     sql = f"""
         CREATE TABLE tag
         (   
-            {utils.COMMON_FIELDS}
+            {utils.COMMON_REACTION_ITEM_FIELDS}
+        ) """
+    
+    connection.execute(sql)
+
+    sql = f"""
+        CREATE TABLE database_uuid
+        (   
+            uuid TEXT
         ) """
     
     connection.execute(sql)
@@ -27,7 +35,7 @@ def upgrade(connection):
         CREATE TABLE fact
         (   
             {utils.COMMON_REACTION_ITEM_FIELDS},
-            type TEXT,
+            type INTEGER,
             is_enum INTEGER NOT NULL DEFAULT 0,
             trigger_signal_on_modified INTEGER NOT NULL DEFAULT 0,
             have_default_value INTEGER NOT NULL DEFAULT 0,
@@ -56,7 +64,7 @@ def upgrade(connection):
     sql = f"""
         CREATE TABLE response
         (   
-            {utils.COMMON_REACTION_ITEM_FIELDS}
+            {utils.COMMON_REACTION_ITEM_FIELDS},
             triggers TEXT,
 
             -- response dialog fields
@@ -176,3 +184,4 @@ def downgrade(connection):
     connection.execute('DROP TABLE response_group')
     connection.execute('DROP TABLE fact')
     connection.execute('DROP TABLE tag')
+    connection.execute('DROP TABLE database_uuid')
