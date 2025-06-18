@@ -36,6 +36,7 @@ def upgrade(connection):
         (   
             {utils.COMMON_REACTION_ITEM_FIELDS},
             type INTEGER,
+            hint_string TEXT,
             is_enum INTEGER NOT NULL DEFAULT 0,
             trigger_signal_on_modified INTEGER NOT NULL DEFAULT 0,
             have_default_value INTEGER NOT NULL DEFAULT 0,
@@ -78,13 +79,14 @@ def upgrade(connection):
     sql = f"""
         CREATE TABLE response_parent_group_rel
         (   
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             parent_group_id INTEGER NOT NULL,
             response_group_id INTEGER,
             response_id, INTEGER,
 
-            FOREIGN KEY (parent_group_id) REFERENCES response_group(id),
-            FOREIGN KEY (response_group_id) REFERENCES response_group(id),
-            FOREIGN KEY (response_id) REFERENCES response(id),
+            FOREIGN KEY (parent_group_id) REFERENCES response_group(id) ON DELETE CASCADE,
+            FOREIGN KEY (response_group_id) REFERENCES response_group(id) ON DELETE CASCADE,
+            FOREIGN KEY (response_id) REFERENCES response(id) ON DELETE CASCADE,
 
             UNIQUE (parent_group_id, response_group_id),
             UNIQUE (parent_group_id, response_id),
@@ -106,10 +108,10 @@ def upgrade(connection):
             text TEXT, -- this is json field
             triggers TEXT,
 
-            FOREIGN KEY (event_id) REFERENCES event(id),
-            FOREIGN KEY (response_group_id) REFERENCES event(id),
+            FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
+            FOREIGN KEY (response_group_id) REFERENCES response_group(id) ON DELETE CASCADE,
 
-            FOREIGN KEY (response_id) REFERENCES response(id),
+            FOREIGN KEY (response_id) REFERENCES response(id) ON DELETE CASCADE,
             {utils.COMMON_CHECKS_RULE}
         ) """
     
@@ -128,8 +130,8 @@ def upgrade(connection):
             is_operation INTEGER NOT NULL DEFAULT 0,
 
             CHECK (is_reverse IN (0, 1) AND is_operation IN (0, 1)),
-            FOREIGN KEY (fact_id) REFERENCES fact(id),
-            FOREIGN KEY (rule_id) REFERENCES rule(id)
+            FOREIGN KEY (fact_id) REFERENCES fact(id) ON DELETE SET NULL,
+            FOREIGN KEY (rule_id) REFERENCES rule(id) ON DELETE CASCADE
         ) """
     
     connection.execute(sql)
@@ -143,8 +145,8 @@ def upgrade(connection):
             fact_id INTEGER,
             modification_value TEXT,
             operation TEXT,
-            FOREIGN KEY (fact_id) REFERENCES fact(id),
-            FOREIGN KEY (rule_id) REFERENCES rule(id)
+            FOREIGN KEY (fact_id) REFERENCES fact(id) ON DELETE SET NULL,
+            FOREIGN KEY (rule_id) REFERENCES rule(id) ON DELETE CASCADE
         ) """
     
     connection.execute(sql)
@@ -152,17 +154,18 @@ def upgrade(connection):
     sql = f"""
         CREATE TABLE tag_item_rel
         (   
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             tag_id INTEGER NOT NULL,
             response_group_id INTEGER,
             response_id INTEGER,
             fact_id INTEGER,
             event_id INTEGER,
 
-            FOREIGN KEY (tag_id) REFERENCES tag(id),
-            FOREIGN KEY (response_group_id) REFERENCES response_group(id),
-            FOREIGN KEY (response_id) REFERENCES response(id),
-            FOREIGN KEY (fact_id) REFERENCES fact(id),
-            FOREIGN KEY (event_id) REFERENCES event(id),
+            FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+            FOREIGN KEY (response_group_id) REFERENCES response_group(id) ON DELETE CASCADE,
+            FOREIGN KEY (response_id) REFERENCES response(id) ON DELETE CASCADE,
+            FOREIGN KEY (fact_id) REFERENCES fact(id) ON DELETE CASCADE,
+            FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
             UNIQUE (tag_id, response_group_id),
             UNIQUE (tag_id, response_id),
             UNIQUE (tag_id, fact_id),
