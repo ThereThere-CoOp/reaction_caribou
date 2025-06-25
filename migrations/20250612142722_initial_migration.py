@@ -127,9 +127,8 @@ def upgrade(connection):
             value_a TEXT,
             value_b TEXT,
             is_reverse INTEGER NOT NULL DEFAULT 0,
-            is_operation INTEGER NOT NULL DEFAULT 0,
-
-            CHECK (is_reverse IN (0, 1) AND is_operation IN (0, 1)),
+            function TEXT,
+            
             FOREIGN KEY (fact_id) REFERENCES fact(id) ON DELETE SET NULL,
             FOREIGN KEY (rule_id) REFERENCES rule(id) ON DELETE CASCADE
         ) """

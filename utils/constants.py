@@ -2,7 +2,8 @@ COMMON_FIELDS = """
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         uid TEXT UNIQUE,
         label TEXT,
-        description TEXT
+        description TEXT,
+        reaction_item_type INTEGER
     """
 
 COMMON_REACTION_ITEM_FIELDS = f"""
