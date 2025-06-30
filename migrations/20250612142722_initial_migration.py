@@ -144,8 +144,11 @@ def upgrade(connection):
             fact_id INTEGER,
             modification_value TEXT,
             operation TEXT,
+            is_function INTEGER NOT NULL DEFAULT 0,
+            function TEXT,
             FOREIGN KEY (fact_id) REFERENCES fact(id) ON DELETE SET NULL,
-            FOREIGN KEY (rule_id) REFERENCES rule(id) ON DELETE CASCADE
+            FOREIGN KEY (rule_id) REFERENCES rule(id) ON DELETE CASCADE,
+            CHECK (is_function IN (0, 1))
         ) """
     
     connection.execute(sql)
