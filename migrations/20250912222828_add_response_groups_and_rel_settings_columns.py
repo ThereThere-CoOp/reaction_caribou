@@ -27,8 +27,8 @@ def upgrade(connection):
 
     sql = f"""
             ALTER TABLE response_parent_group_rel
-            ADD COLUMN match_once INTEGER DEFAULT 0
-            CHECK (match_once IN (0, 1));
+            ADD COLUMN return_once INTEGER DEFAULT 0
+            CHECK (return_once IN (0, 1));
             
     """
 
@@ -60,7 +60,7 @@ def downgrade(connection):
 
     sql = f"""
             ALTER TABLE response_parent_group_rel
-            DROP COLUMN match_once; 
+            DROP COLUMN return_once; 
         """
 
     connection.execute(sql)
