@@ -20,7 +20,7 @@ def upgrade(connection):
 
     sql = f"""
             ALTER TABLE response_parent_group_rel
-            ADD COLUMN execution_order INTEGER; 
+            ADD COLUMN execution_order INTEGER DEFAULT 0; 
     """
 
     connection.execute(sql)
